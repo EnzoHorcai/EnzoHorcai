@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: [".github/workflows/stats.yml"]
+    paths: [".github/workflows/stats.yml", "scripts/cards.mjs"]
 
 jobs:
   stats:
@@ -20,34 +20,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Card de estatísticas
-        uses: stats-organization/github-readme-stats-action@v2
+      - uses: actions/setup-node@v4
         with:
-          card: stats
-          options: username=${{ github.repository_owner }}&show_icons=true&count_private=true&include_all_commits=true&theme=tokyonight&hide_border=true&bg_color=0D1117&locale=pt-br
-          path: profile/stats.svg
-          token: ${{ env.TOKEN }}
+          node-version: 22
 
-      - name: Verifica card de estatísticas
-        id: check
-        run: grep -q "Something went wrong" profile/stats.svg && echo "retry=true" >> "$GITHUB_OUTPUT" || true
-
-      - name: Card de estatísticas (nova tentativa)
-        if: steps.check.outputs.retry == 'true'
-        uses: stats-organization/github-readme-stats-action@v2
-        with:
-          card: stats
-          options: username=${{ github.repository_owner }}&show_icons=true&count_private=true&include_all_commits=true&theme=tokyonight&hide_border=true&bg_color=0D1117&locale=pt-br
-          path: profile/stats.svg
-          token: ${{ env.TOKEN }}
-
-      - name: Card de linguagens mais usadas
-        uses: stats-organization/github-readme-stats-action@v2
-        with:
-          card: top-langs
-          options: username=${{ github.repository_owner }}&layout=compact&langs_count=8&theme=tokyonight&hide_border=true&bg_color=0D1117&locale=pt-br
-          path: profile/top-langs.svg
-          token: ${{ env.TOKEN }}
+      - name: Cards de estatísticas e linguagens
+        env:
+          STATS_TOKEN: ${{ env.TOKEN }}
+        run: |
+          npm install --no-save --no-package-lock @stats-organization/github-readme-stats-core@2.2.0
+          node scripts/cards.mjs
 
       - name: Gráfico de contribuições (snake)
         uses: Platane/snk@v3
@@ -57,15 +39,6 @@ jobs:
           outputs: |
             profile/snake.svg
             profile/snake-dark.svg?palette=github-dark
-
-      - name: Mantém a versão anterior de cards com erro
-        run: |
-          for f in profile/*.svg; do
-            if grep -q "Something went wrong" "$f"; then
-              echo "::warning::$f falhou, mantendo a versão anterior"
-              git checkout -- "$f" 2>/dev/null || rm -f "$f"
-            fi
-          done
 
       - name: Commit dos cards
         run: |
