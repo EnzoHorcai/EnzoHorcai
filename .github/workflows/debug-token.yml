@@ -1,0 +1,13 @@
+name: debug-token
+on: workflow_dispatch
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          GH_TOKEN: ${{ secrets.STATS_TOKEN }}
+        run: |
+          echo "token prefix: ${GH_TOKEN:0:4}"
+          curl -sI -H "Authorization: bearer $GH_TOKEN" https://api.github.com/user | grep -iE "^HTTP|x-oauth-scopes|github-authentication-token-expiration|x-ratelimit-remaining"
+          curl -s -H "Authorization: bearer $GH_TOKEN" -X POST https://api.github.com/graphql \
+            -d '{"query":"query { user(login:\"EnzoHorcai\") { login contributionsCollection { totalCommitContributions restrictedContributionsCount } repositoriesContributedTo(first:1, contributionTypes:[COMMIT,ISSUE,PULL_REQUEST,REPOSITORY]) { totalCount } } }"}' | head -c 800
