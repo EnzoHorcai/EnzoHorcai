@@ -94,7 +94,10 @@ Sou estudante de **Ciência da Computação na UNIFIL Londrina** e desenvolvedor
 
 <br/>
 
-<img src="https://streak-stats.demolab.com/?user=EnzoHorcai&theme=tokyonight&hide_border=true&background=0D1117" alt="GitHub Streak" />
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./profile/snake-dark.svg" />
+  <img src="./profile/snake.svg" alt="Contribuições do GitHub" width="100%" />
+</picture>
 
 <sub>📈 Estatísticas geradas automaticamente pelo GitHub Actions, incluindo repositórios novos.</sub>
 
@@ -104,7 +107,7 @@ Sou estudante de **Ciência da Computação na UNIFIL Londrina** e desenvolvedor
 
 <div align="center">
 
-[![](https://visitcount.itsvg.in/api?id=EnzoHorcai&icon=0&color=0)](https://visitcount.itsvg.in)
+![Visitas](https://komarev.com/ghpvc/?username=EnzoHorcai&style=for-the-badge&color=1f6feb&label=VISITAS)
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:8957e5,50:1f6feb,100:0d1117&height=100&section=footer" width="100%" />
 
