@@ -28,6 +28,19 @@ jobs:
           path: profile/stats.svg
           token: ${{ env.TOKEN }}
 
+      - name: Verifica card de estatísticas
+        id: check
+        run: grep -q "Something went wrong" profile/stats.svg && echo "retry=true" >> "$GITHUB_OUTPUT" || true
+
+      - name: Card de estatísticas (nova tentativa)
+        if: steps.check.outputs.retry == 'true'
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          card: stats
+          options: username=${{ github.repository_owner }}&show_icons=true&count_private=true&include_all_commits=true&theme=tokyonight&hide_border=true&bg_color=0D1117&locale=pt-br
+          path: profile/stats.svg
+          token: ${{ env.TOKEN }}
+
       - name: Card de linguagens mais usadas
         uses: stats-organization/github-readme-stats-action@v2
         with:
@@ -44,6 +57,15 @@ jobs:
           outputs: |
             profile/snake.svg
             profile/snake-dark.svg?palette=github-dark
+
+      - name: Mantém a versão anterior de cards com erro
+        run: |
+          for f in profile/*.svg; do
+            if grep -q "Something went wrong" "$f"; then
+              echo "::warning::$f falhou, mantendo a versão anterior"
+              git checkout -- "$f" 2>/dev/null || rm -f "$f"
+            fi
+          done
 
       - name: Commit dos cards
         run: |
