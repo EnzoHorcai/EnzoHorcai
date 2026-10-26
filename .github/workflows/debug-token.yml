@@ -4,10 +4,20 @@ jobs:
   debug:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
       - env:
-          GH_TOKEN: ${{ secrets.STATS_TOKEN }}
+          PAT_1: ${{ secrets.STATS_TOKEN }}
         run: |
-          echo "token prefix: ${GH_TOKEN:0:4}"
-          curl -sI -H "Authorization: bearer $GH_TOKEN" https://api.github.com/user | grep -iE "^HTTP|x-oauth-scopes|github-authentication-token-expiration|x-ratelimit-remaining"
-          curl -s -H "Authorization: bearer $GH_TOKEN" -X POST https://api.github.com/graphql \
-            -d '{"query":"query { user(login:\"EnzoHorcai\") { login contributionsCollection { totalCommitContributions restrictedContributionsCount } repositoriesContributedTo(first:1, contributionTypes:[COMMIT,ISSUE,PULL_REQUEST,REPOSITORY]) { totalCount } } }"}' | head -c 800
+          mkdir d && cd d && npm init -y >/dev/null && npm i -s @stats-organization/github-readme-stats-core@2.2.0 axios
+          cat > t.mjs <<'JS'
+          import axios from "axios";
+          axios.interceptors.response.use(r => { if (r.data?.errors || r.data?.message) console.log("API:", r.status, JSON.stringify(r.data).slice(0,600)); return r; },
+            e => { console.log("HTTPERR:", e.response?.status, JSON.stringify(e.response?.data).slice(0,600), e.message); return Promise.reject(e); });
+          const { api } = await import("@stats-organization/github-readme-stats-core");
+          for (const q of ["count_private=true&include_all_commits=true", "count_private=true", ""]) {
+            const r = await api(Object.fromEntries(new URLSearchParams("username=EnzoHorcai&" + q)), process.env.PAT_1);
+            console.log("==", q, r.status, r.content.replace(/<[^>]+>/g," ").replace(/\s+/g," ").slice(0,160));
+          }
+          JS
+          node t.mjs
