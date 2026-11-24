@@ -9,7 +9,7 @@
         aria-labelledby="descId"
       >
         <title id="titleId">Estat&#237;sticas do GitHub de Enzo Hor&#231;ai da Silva, Rank: C+</title>
-        <desc id="descId">Total de estrelas: 0, Total de Commits  : 1259, Total de PRs: 11, Total de Issues: 1, Contribuiu para (ano passado): 6</desc>
+        <desc id="descId">Total de estrelas: 0, Total de Commits  : 1270, Total de PRs: 11, Total de Issues: 1, Contribuiu para (ano passado): 6</desc>
         <style>
           .header {
             font: 600 18px 'Segoe UI', Ubuntu, Sans-Serif;
@@ -73,7 +73,7 @@
         stroke-dashoffset: 251.32741228718345;
       }
       to {
-        stroke-dashoffset: 208.8583891067527;
+        stroke-dashoffset: 208.7254491975024;
       }
     }
   
